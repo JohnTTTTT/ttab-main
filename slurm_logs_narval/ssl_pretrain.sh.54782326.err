@@ -1,0 +1,76 @@
+Lmod has detected the following error: The following module(s) are unknown:
+"python/3.11.4"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "python/3.11.4"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/timm/models/helpers.py:7: FutureWarning: Importing from timm.models.helpers is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/utils/data/dataloader.py:624: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+Traceback (most recent call last):
+  File "/lustre03/project/6090504/johnt/ttab-main/pretrain/ssl_pretrain.py", line 217, in <module>
+    train(config)
+  File "/lustre03/project/6090504/johnt/ttab-main/pretrain/ssl_pretrain.py", line 89, in train
+    targets_ssh_hat = model.ssh(inputs_ssh)
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre03/project/6090504/johnt/ttab-main/ttab/model_adaptation/utils.py", line 396, in forward
+    return self.head(self.ext(x))
+                     ^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre03/project/6090504/johnt/ttab-main/ttab/model_adaptation/utils.py", line 175, in forward
+    return self.model.forward_features(x)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre03/project/6090504/johnt/ttab-main/ttab/loads/models/resnet.py", line 557, in forward_features
+    x = self.layer1(x)
+        ^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/container.py", line 250, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lustre03/project/6090504/johnt/ttab-main/ttab/loads/models/resnet.py", line 144, in forward
+    out = self.bn1(out)
+          ^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/modules/batchnorm.py", line 193, in forward
+    return F.batch_norm(
+           ^^^^^^^^^^^^^
+  File "/home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/lib/python3.11/site-packages/torch/nn/functional.py", line 2822, in batch_norm
+    return torch.batch_norm(
+           ^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 392.00 MiB. GPU 0 has a total capacity of 15.77 GiB of which 10.69 MiB is free. Including non-PyTorch memory, this process has 15.75 GiB memory in use. Of the allocated memory 15.23 GiB is allocated by PyTorch, and 163.15 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
