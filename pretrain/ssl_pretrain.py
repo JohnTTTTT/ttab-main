@@ -5,7 +5,7 @@ import tyro
 from typing import Optional
 import sys
 sys.path.append("..")
-
+import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -26,7 +26,7 @@ class TrainingParameters:
     ckpt_path: str = "./pretrain/checkpoint"
     """Path to save the checkpoint."""
     seed: int = 2022
-    device: str = "cuda:0"
+    device: str = "cuda"
     entry_of_shared_layers: str = "layer4"
     """The position of network where the main model and auxiliary branch split."""
     dim_out: int = 4
@@ -49,10 +49,10 @@ class TrainingParameters:
     weight_decay: float = 5e-4
     smooth: float = 0.1
     """"""
-    maxEpochs: int = 150
+    maxEpochs: int = 100
     milestones: list = field(default_factory=lambda: [75, 125])
     """The epochs to decay the learning rate used in lr scheduler."""
-    save_epoch: int = 50
+    save_epoch: int = 10
 
     @property
     def base_data_name(self):
@@ -65,7 +65,7 @@ TIME_NOW = datetime.now().strftime(DATE_FORMAT)
 
 def train(config: TrainingParameters) -> None:
 
-    # start = time.time()
+    start = time.time()
     model.main_model.train()
     model.ssh.train()
     for _, _, batch in train_loader.iterator(
@@ -73,7 +73,7 @@ def train(config: TrainingParameters) -> None:
         shuffle=True,
         repeat=False,
         ref_num_data=None,
-        num_workers=config.num_workers if hasattr(config, "num_workers") else 2,
+        num_workers=config.num_workers if hasattr(config, "num_workers") else 26,
         pin_memory=True,
         drop_last=False,
     ):
@@ -93,8 +93,8 @@ def train(config: TrainingParameters) -> None:
         loss.backward()
         optimizer.step()
 
-    # finish = time.time()
-    # print("epoch {} training time consumed: {:.2f}s".format(epoch, finish - start))
+    finish = time.time()
+    print("epoch {} training time consumed: {:.2f}s".format(epoch, finish - start))
 
 
 @torch.no_grad()
@@ -113,7 +113,7 @@ def eval_training(config: TrainingParameters, epoch: int) -> float:
         shuffle=True,
         repeat=False,
         ref_num_data=None,
-        num_workers=config.num_workers if hasattr(config, "num_workers") else 2,
+        num_workers=config.num_workers if hasattr(config, "num_workers") else 26,
         pin_memory=True,
         drop_last=False,
     ):
@@ -152,13 +152,18 @@ def eval_training(config: TrainingParameters, epoch: int) -> float:
 
 if __name__ == "__main__":
     cudnn.benchmark = True  # faster runtime
-    config = tyro.cli(TrainingParameters) 
+    config = tyro.cli(TrainingParameters)
 
     # configure model.
     init_model = build_model(config)
     model = SelfSupervisedModel(init_model, config)
-    model.main_model.to(config.device)
-    model.ssh.to(config.device)
+    if torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs")
+        model.main_model = nn.DataParallel(model.main_model)
+        model.ssh = nn.DataParallel(model.ssh)
+
+    model.main_model.to("cuda")
+    model.ssh.to("cuda")
     params = get_train_params(model, config)
 
     # get dataset.
@@ -224,7 +229,7 @@ if __name__ == "__main__":
                 type="best",
                 acc=acc,
             )
-            # print("saving weights file to {}".format(weights_path))
+            print("saving weights file to {}".format(weights_path))
             states = {
                 "model": model.main_model.state_dict(),
                 "head": model.head.state_dict(),
@@ -241,7 +246,7 @@ if __name__ == "__main__":
                 type="regular",
                 acc=acc,
             )
-            # print("saving weights file to {}".format(weights_path))
+            print("saving weights file to {}".format(weights_path))
             states = {
                 "model": model.main_model.state_dict(),
                 "head": model.head.state_dict(),

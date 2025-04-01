@@ -13,7 +13,7 @@ def get_args():
 
     parser.add_argument("--script_path", default=None, type=str)
     parser.add_argument("--script_class_name", default=None, type=str)
-    parser.add_argument("--num_jobs_per_node", default=2, type=int)
+    parser.add_argument("--num_jobs_per_node", default=1, type=int)
     parser.add_argument("--num_jobs_per_script", default=1, type=int)
     parser.add_argument("--wait_in_seconds_per_job", default=15, type=float)
     
@@ -27,7 +27,7 @@ def get_args():
     )
     parser.add_argument("--seed", default=2022, type=int)
     parser.add_argument("--device", default="cuda:0", type=str)
-    parser.add_argument("--num_cpus", default=2, type=int)
+    parser.add_argument("--num_cpus", default=1, type=int)
 
     # define the task & model & adaptation & selection method.
     parser.add_argument("--model_name", default="resnet34", type=str)
@@ -63,7 +63,7 @@ def get_args():
     parser.add_argument("--test_scenario", default=None, type=str)
     parser.add_argument(
         "--base_data_name",
-        default="fairface",
+        default="affectnet",
         choices=[
             "cifar10",
             "cifar100",
@@ -74,12 +74,13 @@ def get_args():
             "waterbirds",
             "yearbook",
             "fairface",
+            "affectnet",
         ],
         type=str,
     )
-    parser.add_argument("--src_data_name", default="fairface", type=str)
+    parser.add_argument("--src_data_name", default="affectnet", type=str)
     parser.add_argument(
-        "--data_names", default="fairface", type=str
+        "--data_names", default="affectnet", type=str
     )
     parser.add_argument(
         "--data_wise",

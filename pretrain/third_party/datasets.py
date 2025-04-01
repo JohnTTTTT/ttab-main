@@ -137,10 +137,11 @@ def get_train_dataset(config) -> BaseLoader:
         val_transform = get_transform("affectnet", input_size=input_size, normalize=normalize, augment=False)
 
         train_root = os.path.join(config.data_path, "/home/johnt/scratch/AffectNet/extracted_files/train_set", "separated_images")
+        val_root = os.path.join(config.data_path, "/home/johnt/scratch/AffectNet/extracted_files/val_set", "separated_images")
 
         # Create the underlying datasets.
         train_dataset = ImageFolderDataset(root=train_root, transform=train_transform)
-        val_dataset = ImageFolderDataset(root=train_root, transform=val_transform)
+        val_dataset = ImageFolderDataset(root=val_root, transform=val_transform)
 
         # Wrap the datasets with PyTorchDataset to support the .iterator() method.
         # Here, we assume AffectNet has 8 emotion categories.
@@ -176,6 +177,7 @@ class AugMixDataset(torch.utils.data.Dataset):
         self.aug = aug
 
     def __getitem__(self, i):
+        print(f"Loading sample {i} augmix")
         x, y = self.dataset[i]
         if self.no_jsd:
             return self.aug(x, self.preprocess), y

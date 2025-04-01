@@ -15,12 +15,8 @@ runs/
 todo/
 *.out
 *.pth
-*.sh
 *.ipynb
 *.txt
 
 datasets/
-!push_to_github.sh
-!ssl_pretrain.sh
-!data_statistics.sh
 !requirements.txt

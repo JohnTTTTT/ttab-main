@@ -212,7 +212,7 @@ class SHOT(BaseAdaptation):
                 ref_num_data=None,
                 num_workers=self._meta_conf.num_workers
                 if hasattr(self._meta_conf, "num_workers")
-                else 2,
+                else 4,
                 pin_memory=True,
                 drop_last=False,
             ):
@@ -300,7 +300,7 @@ class SHOT(BaseAdaptation):
                 ref_num_data=None,
                 num_workers=self._meta_conf.num_workers
                 if hasattr(self._meta_conf, "num_workers")
-                else 2,
+                else 4,
                 generator=G,
                 pin_memory=True,
                 drop_last=drop_last,
@@ -478,7 +478,7 @@ class SHOT(BaseAdaptation):
                 ref_num_data=None,
                 num_workers=self._meta_conf.num_workers
                 if hasattr(self._meta_conf, "num_workers")
-                else 2,
+                else 4,
                 generator=G,
                 pin_memory=True,
                 drop_last=False,

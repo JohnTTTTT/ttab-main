@@ -109,27 +109,33 @@ def build_model(config) -> nn.Module:
 
 def get_train_params(model: nn.Module, config) -> list:
     """Define the trainable parameters for a model using `config`"""
+    main_model = model.main_model.module if isinstance(model.main_model, torch.nn.DataParallel) else model.main_model
+    ssh_model = model.ssh.module if isinstance(model.ssh, torch.nn.DataParallel) else model.ssh
+
     if config.base_data_name in ["officehome", "pacs"]:
         params = []
         learning_rate = config.lr
 
-        for name_module, module in model.main_model.named_children():
+        # Use the unwrapped main_model
+        for name_module, module in main_model.named_children():
             if name_module != "classifier":
                 for _, param in module.named_parameters():
-                    params += [{"params": param, "lr": learning_rate*0.1}]
+                    params += [{"params": param, "lr": learning_rate * 0.1}]
             else:
                 for _, param in module.named_parameters():
                     params += [{"params": param, "lr": learning_rate}]
         
-        for name_module, module in model.ssh.head.named_children():
+        # Use the unwrapped ssh_model for accessing head
+        for name_module, module in ssh_model.head.named_children():
             if isinstance(module, nn.Linear):
                 for _, param in module.named_parameters():
                     params += [{"params": param, "lr": learning_rate}]
             else:
                 for _, param in module.named_parameters():
-                    params += [{"params": param, "lr": learning_rate*0.1}]
+                    params += [{"params": param, "lr": learning_rate * 0.1}]
     else:
-        params = list(model.main_model.parameters()) + list(model.ssh.head.parameters())
+        # Again, use the unwrapped models here
+        params = list(main_model.parameters()) + list(ssh_model.head.parameters())
     return params
 
 def get_lr(step, total_steps, lr_max, lr_min):

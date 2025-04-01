@@ -134,7 +134,7 @@ class PyTorchDataset(object):
         shuffle: bool = True,
         repeat: bool = False,
         ref_num_data: Optional[int] = None,
-        num_workers: int = 1,
+        num_workers: int = 26,
         sampler: Optional[torch.utils.data.Sampler] = None,
         generator: Optional[torch.Generator] = None,
         pin_memory: bool = True,
