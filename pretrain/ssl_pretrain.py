@@ -16,6 +16,8 @@ from ttab.loads.define_model import SelfSupervisedModel
 from ttab.configs.datasets import dataset_defaults
 from third_party.datasets import get_train_dataset
 from third_party.utils import build_model, get_train_params
+import faulthandler
+faulthandler.enable()
 
 @dataclass
 class TrainingParameters:

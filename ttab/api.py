@@ -25,6 +25,7 @@ class Batch(object):
         return Batch(self._x.to(device), self._y.to(device))
 
     def __getitem__(self, index):
+        print(f"Loading sample {index}")
         return self._x[index], self._y[index]
 
 
@@ -41,6 +42,7 @@ class GroupBatch(object):
         return GroupBatch(self._x.to(device), self._y.to(device), self._g.to(device))
 
     def __getitem__(self, index):
+        print(f"Loading sample {index}")
         return self._x[index], self._y[index], self._g[index]
 
 
@@ -162,6 +164,7 @@ class PyTorchDataset(object):
         step = 0
         for _ in itertools.count() if repeat else [0]:
             for i, batch in enumerate(loader):
+                print(f"Loaded batch {i}")
                 step += 1
                 epoch_fractional = float(step) / num_batches
                 yield step, epoch_fractional, self._prepare_batch(batch, self._device)

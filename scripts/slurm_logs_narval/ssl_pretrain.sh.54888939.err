@@ -15,3 +15,4 @@ Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
 Due to MODULEPATH changes, the following have been reloaded:
   1) openmpi/4.0.3
 
+slurmstepd: error: *** JOB 54888939 ON bg12104 CANCELLED AT 2025-04-01T21:46:28 ***

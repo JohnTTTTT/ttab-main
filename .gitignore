@@ -18,5 +18,4 @@ todo/
 *.ipynb
 *.txt
 
-datasets/
 !requirements.txt
