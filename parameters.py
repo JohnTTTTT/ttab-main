@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument("--data_path", default="./datasets", type=str)
     parser.add_argument(
         "--ckpt_path",
-        default="./pretrain/pretrain/checkpoint/resnet34_with_head/fairface/Wednesday_05_March_2025_00h_32m_15s/resnet34_with_head-10-regular-0.947553813457489.pth",
+        default="/home/johnt/projects/rrg-amiilab/johnt/fmae-iat/exp_AffectNet8_finetune_vit_L/checkpoint-28.pth",
         type=str,
     )
     parser.add_argument("--seed", default=2022, type=int)
@@ -30,7 +30,7 @@ def get_args():
     parser.add_argument("--num_cpus", default=1, type=int)
 
     # define the task & model & adaptation & selection method.
-    parser.add_argument("--model_name", default="resnet34", type=str)
+    parser.add_argument("--model_name", default="vit_large_patch16_224", type=str)
     parser.add_argument("--group_norm_num_groups", default=None, type=int)
     parser.add_argument(
         "--model_adaptation_method",
@@ -73,7 +73,6 @@ def get_args():
             "coloredmnist",
             "waterbirds",
             "yearbook",
-            "fairface",
             "affectnet",
         ],
         type=str,
@@ -88,8 +87,8 @@ def get_args():
         choices=["batch_wise", "sample_wise"],
         type=str,
     )
-    parser.add_argument("--batch_size", default=16, type=int)
-    parser.add_argument("--lr", default=1e-3, type=float)
+    parser.add_argument("--batch_size", default=32, type=int)
+    parser.add_argument("--lr", default=0.01, type=float)
     parser.add_argument("--n_train_steps", default=1, type=int)
     parser.add_argument("--offline_pre_adapt", default=False, type=str2bool)
     parser.add_argument("--episodic", default=False, type=str2bool)
@@ -172,7 +171,7 @@ def get_args():
     # misc
     parser.add_argument(
         "--grad_checkpoint",
-        default=False,
+        default=True,
         help="Trade computation for gpu space.",
         type=str2bool,
     )

@@ -1,0 +1,11 @@
+
+Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
+
+
+Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
+
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/helpers.py:7: FutureWarning: Importing from timm.models.helpers is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+slurmstepd: error: *** JOB 42121507 ON ng31002 CANCELLED AT 2025-04-04T05:59:17 ***

@@ -1,0 +1,80 @@
+OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python run_exp.py --job_name tta  --job_id /tmp/jobrun_logs_1745017118  --timestamp 1745018051  --python_path python  --main_file run_exp.py  --num_jobs_per_node 1  --num_jobs_per_script 1  --wait_in_seconds_per_job 15  --root_path ./logs  --data_path ./datasets  --ckpt_path /home/johnt/projects/rrg-amiilab/johnt/fmae-iat/exp_AffectNet8_finetune_vit_L/checkpoint-28.pth  --seed 2022  --device cuda:0  --num_cpus 1  --model_name vit_large_patch16_224  --model_adaptation_method no_adaptation  --model_selection_method last_iterate  --task classification  --base_data_name affectnet  --src_data_name affectnet  --data_names affectnet  --data_wise batch_wise  --batch_size 32  --lr 0.01  --n_train_steps 1  --offline_pre_adapt False  --episodic False  --intra_domain_shuffle True  --inter_domain HomogeneousNoMixture  --domain_sampling_name uniform  --domain_sampling_ratio 1.0  --non_iid_pattern class_wise_over_domain  --non_iid_ness 0.1  --step_ratios 0.1 0.3 0.5 0.75  --stochastic_restore_model False  --restore_prob 0.01  --fishers False  --fisher_size 5000  --fisher_alpha 1.5  --aug_size 32  --record_preadapted_perf False  --grad_checkpoint True  --debug False  --device cuda:0   
+[johnt@ng31301 ttab-main]$ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python run_exp.py --job_name tta  --job_id /tmp/jobrun_logs_1745017118  --timestamp 1745018051  --python_path python  --main_file run_exp.py  --num_jobs_per_node 1  --num_jobs_per_script 1  --wait_in_seconds_per_job 15  --root_path ./logs  --data_path ./datasets  --ckpt_path /home/johnt/projects/rrg-amiilab/johnt/fmae-iat/exp_AffectNet8_finetune_vit_L/checkpoint-28.pth  --seed 2022  --device cuda:0  --num_cpus 1  --model_name vit_large_patch16_224  --model_adaptation_method no_adaptation  --model_selection_method last_iterate  --task classification  --base_data_name affectnet  --src_data_name affectnet  --data_names affectnet  --data_wise batch_wise  --batch_size 32  --lr 0.01  --n_train_steps 1  --offline_pre_adapt False  --episodic False  --intra_domain_shuffle True  --inter_domain HomogeneousNoMixture  --domain_sampling_name uniform  --domain_sampling_ratio 1.0  --non_iid_pattern class_wise_over_domain  --non_iid_ness 0.1  --step_ratios 0.1 0.3 0.5 0.75  --stochastic_restore_model False  --restore_prob 0.01  --fishers False  --fisher_size 5000  --fisher_alpha 1.5  --aug_size 32  --record_preadapted_perf False  --grad_checkpoint True  --debug False  --device cuda:0
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models     
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)                               
+Missing keys: []                  
+Unexpected keys: []               
+Scenario(                         
+  task='classification',          
+  model_name='vit_large_patch16_224',                               
+  model_adaptation_method='no_adaptation',                          
+  model_selection_method='last_iterate',                            
+  base_data_name='affectnet',     
+  src_data_name='affectnet',      
+  test_domains=[ TestDomain(      
+                    base_data_name='affectnet',                     
+                    data_name='affectnet',                          
+                    shift_type='no_shift',                          
+                    shift_property=NoShiftProperty(has_shift=False),                                                                    
+                    domain_sampling_name='uniform',                 
+                    domain_sampling_value=None,                     
+                    domain_sampling_ratio=1.0)],                    
+  test_case=TestCase(             
+               inter_domain=HomogeneousNoMixture(has_mixture=False),                                                                    
+               batch_size=32,     
+               data_wise='batch_wise',                              
+               offline_pre_adapt=False,                             
+               episodic=False,    
+               intra_domain_shuffle=True))                          
+Loaded batch 0                    
+runtime: {'time': '2025-04-18 19:05:02', 'step': 1, 'epoch': 0.008, 'cross_entropy': 2.9655275344848633, 'accuracy_top1': 0.0} ({'split': 'test', 'type': 'step'})        
+Loaded batch 1                    
+runtime: {'time': '2025-04-18 19:05:13', 'step': 2, 'epoch': 0.016, 'cross_entropy': 2.753361940383911, 'accuracy_top1': 0.0} ({'split': 'test', 'type': 'step'})         
+Loaded batch 2                    
+^CTraceback (most recent call last):                                
+  File "/lustre06/project/6090504/johnt/ttab-main/run_exp.py", line 48, in <module>                                                     
+    main(init_config=conf)        
+  File "/lustre06/project/6090504/johnt/ttab-main/run_exp.py", line 43, in main                                                         
+    benchmark.eval()              
+  File "/lustre06/project/6090504/johnt/ttab-main/ttab/benchmark.py", line 202, in eval                                                 
+    previous_batches = self._online_adapt_step(                     
+  File "/lustre06/project/6090504/johnt/ttab-main/ttab/benchmark.py", line 132, in _online_adapt_step                                   
+    self._model_adaptation_cls.adapt_and_eval(                      
+  File "/lustre06/project/6090504/johnt/ttab-main/ttab/model_adaptation/no_adaptation.py", line 89, in adapt_and_eval                   
+    y_hat = self._model(current_batch._x)                           
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl                                
+    return forward_call(*args, **kwargs)                            
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 853, in forward                             
+    x = self.forward_features(x)  
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 832, in forward_features                    
+    x = checkpoint_seq(self.blocks, x)                              
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_manipulate.py", line 278, in checkpoint_seq                             
+    x = torch.utils.checkpoint.checkpoint(                          
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 251, in checkpoint
+    return _checkpoint_without_reentrant(                           
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 432, in _checkpoint_without_reentrant               
+    output = function(*args, **kwargs)                              
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_manipulate.py", line 261, in forward  
+    _x = functions[j](_x)         
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl                                
+    return forward_call(*args, **kwargs)                            
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 170, in forward                             
+    x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))      
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl                                
+    return forward_call(*args, **kwargs)                            
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/normalization.py", line 190, in forward                             
+    return F.layer_norm(          
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/functional.py", line 2515, in layer_norm  
+    return torch.layer_norm(input, normalized_shape, weight, bias, eps, torch.backends.cudnn.enabled)                                   
+KeyboardInterrupt                 
+
+[johnt@ng31301 ttab-main]$ tmux capture-pane -p -J -S - -t tta-job-0 > tta-job-0.log                                                    
+
+
+
+
+
+
+
+
+

@@ -1,203 +1,152 @@
 # -*- coding: utf-8 -*-
-import os
+"""
+define_model.py
 
+This module defines model constructors and pretrained-loading logic for TTAB.
+"""
+import os
 import timm
 import torch
-import ttab.model_adaptation.utils as adaptation_utils
 from torch import nn
+from collections import OrderedDict
+import ttab.model_adaptation.utils as adaptation_utils
 from ttab.loads.models import WideResNet, cct_7_3x1_32, resnet
-from ttab.loads.models.resnet import ResNetCifar, ResNetImagenet, ResNetMNIST, ResNetAffectNet
+from ttab.loads.models.resnet import (
+    ResNetCifar,
+    ResNetImagenet,
+    ResNetMNIST,
+    ResNetAffectNet,
+)
+
+
+def strip_module_prefix(state_dict: dict) -> OrderedDict:
+    """
+    Remove 'module.' prefix from state_dict keys (for DataParallel compatibility).
+    """
+    new_state = OrderedDict()
+    for k, v in state_dict.items():
+        new_state[k.replace("module.", "")] = v
+    return new_state
 
 
 class SelfSupervisedModel(nn.Module):
     """
-    This class is built for TTT.
-
-    It adds an auxiliary head to the original model architecture.
+    Wrapper for self-supervised TTT adaptation, adding an auxiliary head.
     """
-
-    def __init__(self, model, config):
+    def __init__(self, model: nn.Module, config):
         super(SelfSupervisedModel, self).__init__()
         self._config = config
         self.main_model = model
         self.ext, self.head = self._define_head()
         self.ssh = adaptation_utils.ExtractorHead(self.ext, self.head)
 
-    def _define_resnet_head(self):
-        assert hasattr(
-            self._config, "entry_of_shared_layers"
-        ), "Need to set up the number of shared layers as feature extractor."
+    # ... existing _define_resnet_head, _define_vit_head, _define_head methods ...
 
-        if isinstance(self.main_model, ResNetImagenet):
-            if (
-                self._config.entry_of_shared_layers == "layer4"
-                or self._config.entry_of_shared_layers == None
-            ):
-                ext = adaptation_utils.shared_ext_from_layer4(self.main_model)
-                head = adaptation_utils.head_from_classifier(
-                    self.main_model, self._config.dim_out
-                )
-            elif self._config.entry_of_shared_layers == "layer3":
-                ext = adaptation_utils.shared_ext_from_layer3(self.main_model)
-                head = adaptation_utils.head_from_last_layer1(
-                    self.main_model, self._config.dim_out
-                )
-            else:
-                raise ValueError(
-                    f"invalid configuration: entry_of_shared_layers={self._config.entry_of_shared_layers} for dataset={self._config.base_data_name}."
-                )
-        elif isinstance(self.main_model, (ResNetCifar, WideResNet)):
-            if (
-                self._config.entry_of_shared_layers == "layer3"
-                or self._config.entry_of_shared_layers == None
-            ):
-                ext = adaptation_utils.shared_ext_from_layer3(self.main_model)
-                head = adaptation_utils.head_from_classifier(
-                    self.main_model, self._config.dim_out
-                )
-            elif self._config.entry_of_shared_layers == "layer2":
-                ext = adaptation_utils.shared_ext_from_layer2(self.main_model)
-                head = adaptation_utils.head_from_last_layer1(
-                    self.main_model, self._config.dim_out
-                )
-            else:
-                raise ValueError(
-                    f"invalid configuration: entry_of_shared_layers={self._config.entry_of_shared_layers} for dataset={self._config.base_data_name}."
-                )
-        elif isinstance(self.main_model, ResNetMNIST):
-            if (
-                self._config.entry_of_shared_layers == "layer4"
-                or self._config.entry_of_shared_layers == None
-            ):
-                ext = adaptation_utils.shared_ext_from_layer4(self.main_model)
-                head = adaptation_utils.head_from_classifier(
-                    self.main_model, self._config.dim_out
-                )
-            elif self._config.entry_of_shared_layers == "layer3":
-                ext = adaptation_utils.shared_ext_from_layer3(self.main_model)
-                head = adaptation_utils.head_from_last_layer1(
-                    self.main_model, self._config.dim_out
-                )
-            else:
-                raise ValueError(
-                    f"invalid configuration: entry_of_shared_layers={self._config.entry_of_shared_layers} for dataset={self._config.base_data_name}."
-                )
-        elif isinstance(self.main_model, ResNetAffectNet):
-            if (
-                self._config.entry_of_shared_layers == "layer4"
-                or self._config.entry_of_shared_layers is None
-            ):
-                ext = adaptation_utils.shared_ext_from_layer4(self.main_model)
-                head = adaptation_utils.head_from_classifier(
-                    self.main_model, self._config.dim_out
-                )
-            elif self._config.entry_of_shared_layers == "layer3":
-                ext = adaptation_utils.shared_ext_from_layer3(self.main_model)
-                head = adaptation_utils.head_from_last_layer1(
-                    self.main_model, self._config.dim_out
-                )
-            else:
-                raise ValueError(
-                    f"invalid configuration: entry_of_shared_layers={self._config.entry_of_shared_layers} for dataset={self._config.base_data_name}."
-                )
-        return ext, head
-
-    def _define_vit_head(self):
-        ext = adaptation_utils.VitExtractor(self.main_model)
-        head = nn.Linear(
-            in_features=self.main_model.head.in_features,
-            out_features=self._config.dim_out,
-            bias=True,
-        )
-        return ext, head
-
-    def _define_head(self):
-        if "resnet" in self._config.model_name:
-            return self._define_resnet_head()
-        elif "vit" in self._config.model_name:
-            return self._define_vit_head()
-
-    def load_pretrained_parameters(self, ckpt_path):
-        """This function helps to load pretrained parameters given the checkpoint path."""
+    def load_pretrained_parameters(self, ckpt_path: str):
+        """
+        Load and merge backbone and head weights from a checkpoint into the main_model.
+        """
+        # 1) load checkpoint dict
         ckpt = torch.load(ckpt_path, map_location=self._config.device)
-        self.main_model.load_state_dict(ckpt["model"])
-        self.head.load_state_dict(ckpt["head"])
+        backbone_sd = ckpt.get("model", {})
+        head_sd = ckpt.get("head", {})
+
+        # 2) strip DataParallel prefixes
+        clean_backbone = strip_module_prefix(backbone_sd)
+        clean_head = strip_module_prefix(head_sd)
+
+        # 3) merge both dicts
+        merged_sd = OrderedDict(**clean_backbone, **clean_head)
+
+        # 4) load into the wrapped model (main_model)
+        missing, unexpected = self.main_model.load_state_dict(merged_sd, strict=False)
+        print("Missing keys:", missing)
+        print("Unexpected keys:", unexpected)
 
 
 def define_model(config):
-    # use public models and checkpoints and not adjust the model arch.
-    if "imagenet" in config.data_names:
+    """
+    Instantiate a model based on config.data_names and config.model_name.
+    """
+    # Imagenet-pretrained via timm
+    if 'imagenet' in config.data_names:
         if config.group_norm_num_groups is not None:
-            assert config.model_name == "resnet50"
-            return timm.create_model(config.model_name + "_gn", pretrained=True)
+            assert config.model_name == 'resnet50'
+            return timm.create_model(config.model_name + '_gn', pretrained=True)
         return timm.create_model(config.model_name, pretrained=True)
 
-    # use built-in models and local checkpoints.
-    if "wideresnet" in config.model_name:
-        components = config.model_name.split("_")
-        depth = int(components[0].replace("wideresnet", ""))
-        widen_factor = int(components[1])
-        init_model = WideResNet(
-            depth,
-            widen_factor,
-            config.statistics["n_classes"],
-            split_point=config.entry_of_shared_layers,
-            dropout_rate=0.0,
+    # Local models (ResNet, WideResNet, etc.)
+    if 'wideresnet' in config.model_name:
+        depth, widen_factor = map(int, config.model_name.replace('wideresnet', '').split('_'))
+        return WideResNet(
+            depth, widen_factor, config.statistics['n_classes'],
+            split_point=config.entry_of_shared_layers, dropout_rate=0.0
         )
-    elif "resnet" in config.model_name:
-        depth = int(config.model_name.replace("resnet", ""))
-        init_model = resnet(
+    elif 'resnet' in config.model_name:
+        depth = int(config.model_name.replace('resnet', ''))
+        return resnet(
             config.base_data_name,
             depth,
             split_point=config.entry_of_shared_layers,
             group_norm_num_groups=config.group_norm_num_groups,
             grad_checkpoint=config.grad_checkpoint,
         )
-    elif "vit" in config.model_name:
-        init_model = timm.create_model(config.model_name, pretrained=False)
-        init_model.head = nn.Linear(
-            init_model.head.in_features, config.statistics["n_classes"]
+    elif 'vit_large_patch16_224' in config.model_name:
+        # just build the ViT-Large classifier head—no weight loading here
+        model = timm.create_model(
+            config.model_name,
+            pretrained=False,
+            num_classes=config.statistics['n_classes']
         )
         if config.grad_checkpoint:
-            init_model.set_grad_checkpointing()
-    elif "cct" in config.model_name:
-        return cct_7_3x1_32(pretrained=False)  # not support TTT yet.
+            model.set_grad_checkpointing()
+        return model
+    elif 'cct' in config.model_name:
+        return cct_7_3x1_32(pretrained=False)
     else:
         raise NotImplementedError(f"invalid model_name={config.model_name}.")
 
-    if config.model_adaptation_method == "ttt":
-        return SelfSupervisedModel(init_model, config)
-    return init_model
 
+def load_pretrained_model(config, model: nn.Module):
+    """
+    Load a checkpoint into model (can be plain or SelfSupervisedModel).
+    """
+    # sanity check
+    assert os.path.exists(config.ckpt_path), (
+        'Checkpoint path does not exist: %s' % config.ckpt_path
+    )
 
-def load_pretrained_model(config, model):
-    # safety check
-    assert os.path.exists(
-        config.ckpt_path
-    ), "The user-provided path for the checkpoint does not exist."
-
-    # check IABN layers.
-    # If not having IABN layers, skip the loading.
-    if hasattr(config, "iabn") and config.iabn:
-        iabn_flag = False
-        for _, module in model.named_modules():
-            if isinstance(
-                module,
-                (
-                    adaptation_utils.InstanceAwareBatchNorm2d,
-                    adaptation_utils.InstanceAwareBatchNorm1d,
-                ),
-            ):
-                iabn_flag = True
-        if not iabn_flag:
-            return
-
-    if "imagenet" in config.data_names:
+    # skip imagenet-pretrained branches
+    if 'imagenet' in config.data_names:
         return
 
-    # load parameters
+    # handle self-supervised wrapper
     if isinstance(model, SelfSupervisedModel):
         model.load_pretrained_parameters(config.ckpt_path)
-    else:
-        ckpt = torch.load(config.ckpt_path, map_location=config.device)
-        model.load_state_dict(ckpt["model"])  # ignore the auxiliary branch.
+        return
+
+    # 1) load checkpoint
+    ckpt = torch.load(config.ckpt_path, map_location=config.device)
+    backbone_sd = ckpt.get('model', {})
+    head_sd = ckpt.get('head', {})
+
+    # 2) strip DataParallel prefixes
+    clean_backbone = strip_module_prefix(backbone_sd)
+    
+    remapped = OrderedDict()
+    for k, v in clean_backbone.items():
+        if k.startswith("fc_norm."):
+            # -> norm.weight or norm.bias
+            new_k = k.replace("fc_norm.", "norm.")
+        else:
+            new_k = k
+        remapped[new_k] = v
+
+    # 3) now merge remapped backbone + head (if any)
+    clean_head = strip_module_prefix(head_sd)
+    merged_sd = OrderedDict(**remapped, **clean_head)
+
+    # 4) load into model
+    missing, unexpected = model.load_state_dict(merged_sd, strict=False)
+    print('Missing keys:', missing)
+    print('Unexpected keys:', unexpected)

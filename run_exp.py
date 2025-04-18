@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import parameters
 import ttab.configs.utils as configs_utils
+import torch
+import torch.nn as nn
 import ttab.loads.define_dataset as define_dataset
 from ttab.benchmark import Benchmark
 from ttab.loads.define_model import define_model, load_pretrained_model
@@ -17,6 +19,9 @@ def main(init_config):
 
     # Model.
     model = define_model(config=config)
+    if torch.cuda.device_count() > 1:
+        model = nn.DataParallel(model)     # wrap for multi‑GPU use :contentReference[oaicite:1]{index=1}
+    model.to(conf.device)  
     load_pretrained_model(config=config, model=model)
 
     # Algorithms.

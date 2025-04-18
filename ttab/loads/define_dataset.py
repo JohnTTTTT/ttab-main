@@ -205,7 +205,7 @@ class ConstructTestDataset(object):
         self.device = self.meta_conf.device
         self.input_size = (
             int(self.meta_conf.model_name.split("_")[-1])
-            if "vit" in self.meta_conf.model_name
+            if "vit_large_patch16_224" in self.meta_conf.model_name
             else 32
         )
 
@@ -278,8 +278,6 @@ class ConstructTestDataset(object):
             helper_fn = self._get_waterbirds_test_domain_datasets_helper
         elif "yearbook" in self.base_data_name:
             helper_fn = self._get_yearbook_test_domain_datasets_helper
-        elif "fairface" in self.base_data_name:
-            helper_fn = self._get_fairface_test_domain_datasets_helper
         elif "affectnet" in self.base_data_name:
             helper_fn = self._get_affectnet_test_domain_datasets_helper
         else:
@@ -556,47 +554,6 @@ class ConstructTestDataset(object):
             data_shift_class=data_shift_class,
         )
         return dataset
-    
-    def _get_fairface_test_domain_datasets_helper(
-        self, test_domain: TestDomain, data_augment: bool = False, split: str = "test"
-    ) -> PyTorchDataset:
-        if test_domain.shift_type != "natural":
-            raise NotImplementedError(
-                f"invalid shift type={test_domain.shift_type} for fairface dataset. Only 'natural' is supported."
-            )
-        
-        import os
-        from ttab.api import PyTorchDataset, Batch
-        from ttab.loads.datasets.utils.preprocess_toolkit import get_transform
-        from ttab.loads.datasets.datasets import ImageFolderDataset
-
-        # Define normalization and transform for FairFace.
-        normalize = {"mean": [0.4794, 0.3556, 0.3030], "std": [0.2061, 0.1800, 0.1694]}
-        input_size = 224
-        transform = get_transform("fairface", input_size=input_size, normalize=normalize, augment=data_augment)
-        
-        # Assume your test data is organized as:
-        #   <data_path>/fairface/test/<class_name>/image.jpg
-        test_root = os.path.join(self.data_path, "fairface/organized_images", "test")
-        
-        # Create the raw dataset.
-        raw_dataset = ImageFolderDataset(root=test_root, transform=transform)
-        
-        # Wrap it in a PyTorchDataset.
-        test_dataset = PyTorchDataset(
-            dataset=raw_dataset,
-            device=self.device,
-            prepare_batch=lambda batch, device: Batch(*batch).to(device),
-            num_classes=2,  # assuming binary classification
-        )
-        # Manually copy the transform attributes.
-        test_dataset.transform = raw_dataset.transform
-        test_dataset.target_transform = getattr(raw_dataset, "target_transform", None)
-        
-        # Expose the prepare_batch function as a public attribute.
-        test_dataset.prepare_batch = test_dataset._prepare_batch
-
-        return test_dataset
 
     def _get_affectnet_test_domain_datasets_helper(
         self, test_domain: TestDomain, data_augment: bool = False, split: str = "test"
@@ -617,14 +574,14 @@ class ConstructTestDataset(object):
 
         # Define normalization and transform for AffectNet.
         # Using ImageNet statistics as a starting point.
-        normalize = {"mean": [0.5694, 0.4460, 0.3912], "std": [0.2321, 0.2060, 0.1946]}
+        normalize = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
         input_size = 224
         # Use a transform tailored for AffectNet (you might need to implement or adjust this)
         transform = get_transform("affectnet", input_size=input_size, normalize=normalize, augment=data_augment)
         
         # Assume your test data is organized as:
         #   <data_path>/affectnet/organized_images/test/<class_name>/image.jpg
-        test_root = os.path.join(self.data_path, "/home/johnt/scratch/AffectNet/extracted_files/val_set", "separated_images", split)
+        test_root = os.path.join(self.data_path, "/home/johnt/scratch/AffectNet/dataset", "val")
         
         # Create the raw dataset.
         raw_dataset = ImageFolderDataset(root=test_root, transform=transform)

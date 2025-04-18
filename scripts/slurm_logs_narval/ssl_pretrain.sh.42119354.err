@@ -1,0 +1,111 @@
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) mii/1.1.2
+
+The following have been reloaded with a version change:
+  1) StdEnv/2023 => StdEnv/2020
+  2) blis/0.9.0 => blis/0.8.1
+  3) flexiblas/3.3.1 => flexiblas/3.0.4
+  4) gcccore/.12.3 => gcccore/.9.3.0
+  5) gentoo/2023 => gentoo/2020
+  6) libfabric/1.18.0 => libfabric/1.10.1
+  7) openmpi/4.1.5 => openmpi/4.0.3
+  8) ucx/1.14.1 => ucx/1.8.0
+
+
+Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) blis/0.8.1     2) flexiblas/3.0.4     3) openmpi/4.0.3
+
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/helpers.py:7: FutureWarning: Importing from timm.models.helpers is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+Traceback (most recent call last):
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/util/connection.py", line 95, in create_connection
+    raise err
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    sock.connect(sa)
+OSError: [Errno 101] Network is unreachable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connectionpool.py", line 703, in urlopen
+    httplib_response = self._make_request(
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connectionpool.py", line 386, in _make_request
+    self._validate_conn(conn)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connectionpool.py", line 1040, in _validate_conn
+    conn.connect()
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connection.py", line 358, in connect
+    conn = self._new_conn()
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x1474c4ad5ff0>: Failed to establish a new connection: [Errno 101] Network is unreachable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/requests/adapters.py", line 440, in send
+    resp = conn.urlopen(
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/connectionpool.py", line 785, in urlopen
+    retries = retries.increment(
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /timm/vit_base_patch16_224.augreg2_in21k_ft_in1k/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1474c4ad5ff0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1484, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1401, in get_hf_file_metadata
+    r = _request_wrapper(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 285, in _request_wrapper
+    response = _request_wrapper(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 308, in _request_wrapper
+    response = get_session().request(method=method, url=url, **params)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/requests/sessions.py", line 529, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/requests/sessions.py", line 645, in send
+    r = adapter.send(request, **kwargs)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 96, in send
+    return super().send(request, *args, **kwargs)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Core/scipy-stack/2022a/lib/python3.10/site-packages/requests/adapters.py", line 519, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: (MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /timm/vit_base_patch16_224.augreg2_in21k_ft_in1k/resolve/main/pytorch_model.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1474c4ad5ff0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: 71bd1ac1-bb43-4148-8ed2-6a3a7372541a)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/lustre06/project/6090504/johnt/ttab-main/scripts/../pretrain/ssl_pretrain.py", line 160, in <module>
+    init_model = build_model(config)
+  File "/lustre06/project/6090504/johnt/ttab-main/pretrain/third_party/utils.py", line 110, in build_model
+    model = timm.create_model('vit_base_patch16_224', pretrained=True)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_factory.py", line 126, in create_model
+    model = create_fn(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 2506, in vit_base_patch16_224
+    model = _create_vision_transformer('vit_base_patch16_224', pretrained=pretrained, **dict(model_args, **kwargs))
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 2406, in _create_vision_transformer
+    return build_model_with_cfg(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_builder.py", line 436, in build_model_with_cfg
+    load_pretrained(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_builder.py", line 213, in load_pretrained
+    state_dict = load_state_dict_from_hf(pretrained_loc, weights_only=True, cache_dir=cache_dir)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_hub.py", line 225, in load_state_dict_from_hf
+    cached_file = hf_hub_download(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 961, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1068, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1599, in _raise_on_head_call_error
+    raise LocalEntryNotFoundError(
+huggingface_hub.errors.LocalEntryNotFoundError: An error happened while trying to locate the file on the Hub and we cannot find the requested files in the local cache. Please check your connection and try again or make sure your Internet connection is on.

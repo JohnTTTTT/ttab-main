@@ -6,16 +6,16 @@ from ttab.scenarios import HomogeneousNoMixture, Scenario, TestCase, TestDomain
 default_scenarios = {
     "S1": Scenario(
         task="classification",
-        model_name="resnet18",
+        model_name="vit_large_patch16_224",
         model_adaptation_method="no_adaptation",
         model_selection_method="last_iterate",
-        base_data_name="fairface",
-        src_data_name="fairface",
+        base_data_name="affectnet",
+        src_data_name="affectnet",
         test_domains=[
             TestDomain(
-                base_data_name="fairface",
-                data_name="fairface",
-                shift_type="natural",
+                base_data_name="affectnet",
+                data_name="affectnet",
+                shift_type="no_shift",
                 shift_property=SyntheticShiftProperty(
                     shift_degree=5,
                     shift_name="gaussian_noise",
@@ -29,7 +29,7 @@ default_scenarios = {
         ],
         test_case=TestCase(
             inter_domain=HomogeneousNoMixture(has_mixture=False),
-            batch_size=16,
+            batch_size=32,
             data_wise="batch_wise",
             offline_pre_adapt=False,
             episodic=False,

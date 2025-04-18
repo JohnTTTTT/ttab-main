@@ -88,63 +88,32 @@ def get_train_dataset(config) -> BaseLoader:
             device=config.device,
             data_shift_class=data_shift_class,
         )
-    elif config.data_name == "fairface":
-        from ttab.loads.datasets.datasets import ImageFolderDataset
-        from ttab.api import PyTorchDataset, Batch
-        from ttab.loads.datasets.utils.preprocess_toolkit import get_transform
-        import os
-
-        # Define normalization and transforms for FairFace.
-        normalize = {"mean": [0.4794, 0.3556, 0.3030], "std": [0.2061, 0.1800, 0.1694]}
-        input_size = 224
-        train_transform = get_transform("fairface", input_size=input_size, normalize=normalize, augment=True)
-        val_transform = get_transform("fairface", input_size=input_size, normalize=normalize, augment=False)
-
-        # Assume your FairFace training data is organized under:
-        #   <data_path>/fairface/train/<class_name>/image.jpg
-        train_root = os.path.join(config.data_path, "fairface/organized_images", "train")
-
-        # Create the underlying datasets.
-        train_dataset = ImageFolderDataset(root=train_root, transform=train_transform)
-        val_dataset = ImageFolderDataset(root=train_root, transform=val_transform)
-
-        # Wrap the datasets with PyTorchDataset to support .iterator() method.
-        train_loader = PyTorchDataset(
-            dataset=train_dataset,
-            device=config.device,
-            prepare_batch=lambda batch, device: Batch(*batch).to(device),
-            num_classes=2,
-        )
-        val_loader = PyTorchDataset(
-            dataset=val_dataset,
-            device=config.device,
-            prepare_batch=lambda batch, device: Batch(*batch).to(device),
-            num_classes=2,
-        )
-
-        return train_loader, val_loader
     elif config.data_name == "affectnet":
         from ttab.loads.datasets.datasets import ImageFolderDataset
         from ttab.api import PyTorchDataset, Batch
-        from ttab.loads.datasets.utils.preprocess_toolkit import get_transform
+        # Import the new transforms from affectnet_transforms.py
+        from ttab.loads.datasets.affectnet.affectnet_transforms import get_transform_affectnet
         import os
 
-        # Define normalization and transforms for AffectNet.
-        # Using ImageNet statistics as a common starting point for facial images.
-        normalize = {"mean": [0.5694, 0.4460, 0.3912], "std": [0.2321, 0.2060, 0.1946]}
         input_size = 224
-        train_transform = get_transform("affectnet", input_size=input_size, normalize=normalize, augment=True)
-        val_transform = get_transform("affectnet", input_size=input_size, normalize=normalize, augment=False)
+        # Get the new training and validation transforms.
+        train_transform, val_transform = get_transform_affectnet(input_size=input_size)
 
-        train_root = os.path.join(config.data_path, "/home/johnt/scratch/AffectNet/extracted_files/train_set", "separated_images")
-        val_root = os.path.join(config.data_path, "/home/johnt/scratch/AffectNet/extracted_files/val_set", "separated_images")
+        # Set the root paths (update if necessary).
+        train_root = os.path.join(
+            config.data_path,
+            "/home/johnt/scratch/AffectNet/dataset/train",
+        )
+        val_root = os.path.join(
+            config.data_path,
+            "/home/johnt/scratch/AffectNet/dataset/val",
+        )
 
         # Create the underlying datasets.
         train_dataset = ImageFolderDataset(root=train_root, transform=train_transform)
         val_dataset = ImageFolderDataset(root=val_root, transform=val_transform)
 
         # Wrap the datasets with PyTorchDataset to support the .iterator() method.
-        # Here, we assume AffectNet has 8 emotion categories.
         train_loader = PyTorchDataset(
             dataset=train_dataset,
             device=config.device,

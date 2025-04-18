@@ -204,26 +204,6 @@ def get_transform(
             )
         return transform
     
-    elif name == "fairface":
-        # Use 224x224 as default input size if not provided.
-        input_size = input_size or 224
-        if augment:
-            transform = transforms.Compose([
-                transforms.Resize((input_size, input_size)),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                    std=[0.229, 0.224, 0.225])
-            ])
-        else:
-            transform = transforms.Compose([
-                transforms.Resize((input_size, input_size)),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                    std=[0.229, 0.224, 0.225])
-            ])
-        return transform
-    
     elif name == "affectnet":
         # Use 224x224 as default input size if not provided.
         input_size = input_size or 224

@@ -1,0 +1,18 @@
+
+Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
+
+
+Lmod is automatically replacing "intel/2020.1.217" with "gcc/9.3.0".
+
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/helpers.py:7: FutureWarning: Importing from timm.models.helpers is deprecated, please import via timm.models
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+Traceback (most recent call last):
+  File "/lustre06/project/6090504/johnt/ttab-main/scripts/../pretrain/ssl_pretrain.py", line 160, in <module>
+    init_model = build_model(config)
+  File "/lustre06/project/6090504/johnt/ttab-main/pretrain/third_party/utils.py", line 110, in build_model
+    model = timm.create_model(config.model_name, pretrained=False)
+  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_factory.py", line 122, in create_model
+    raise RuntimeError('Unknown model (%s)' % model_name)
+RuntimeError: Unknown model (vit)

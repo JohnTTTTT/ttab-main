@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --account=rrg-amiilab
 #SBATCH --cpus-per-task=32
-#SBATCH --gpus-per-node=4
+#SBATCH --gpus-per-node=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=100000M
 #SBATCH --time=5-00:00:00
@@ -18,5 +18,4 @@ module load python/3.10.2
 source /home/johnt/projects/rrg-amiilab/johnt/ttab-main/myenv/bin/activate
 module load opencv/4.5.5
 
-python -u ../pretrain/ssl_pretrain.py --data-name affectnet --model-name vit --batch_size 32 --lr 0.0001 --maxEpochs 100
-#sleep 450000
+python run_exps.py

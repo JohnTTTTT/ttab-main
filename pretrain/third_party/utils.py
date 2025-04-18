@@ -105,6 +105,15 @@ def build_model(config) -> nn.Module:
             if config.use_iabn:
                 assert config.group_norm is None, "IABN cannot be used with group norm."
                 model = convert_iabn(model, config)
+        elif "vit" in config.model_name.lower():
+            import timm
+            full_model_name = "vit_base_patch16_224" if config.model_name.lower() == "vit" else config.model_name
+            model = timm.create_model(full_model_name, pretrained=False)
+            state_dict = torch.load('/home/johnt/projects/rrg-amiilab/johnt/ttab-main/vit_base_patch16_224_state_dict.pth', map_location=config.device)
+            model.load_state_dict(state_dict)
+            model.head = nn.Linear(model.head.in_features, num_classes)
+        else:
+            raise ValueError(f"Unsupported model name: {config.model_name}")
     return model
 
 def get_train_params(model: nn.Module, config) -> list:

@@ -35,7 +35,7 @@ data2shift = dict(
     coloredmnist="synthetic",
     waterbirds="natural",
     yearbook="natural",
-    fairface="natural",
+    affectnet="no_shift"
 )
 
 

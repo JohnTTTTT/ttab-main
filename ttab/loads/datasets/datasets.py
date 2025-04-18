@@ -617,6 +617,34 @@ class ColoredMNIST(PyTorchDataset):
     def prepare_batch(batch, device):
         return Batch(*batch).to(device)
 
+class AffectNetMultiTaskDataset(torch.utils.data.Dataset):
+    def __init__(self, root: str, annotation_file: str, transform=None):
+        self.root = root
+        self.transform = transform
+        # Load annotation CSV using pandas.
+        import pandas as pd
+        self.annotations = pd.read_csv(annotation_file)
+        # Create a list of file paths (assume images are stored in subfolders under root)
+        self.data = [os.path.join(root, row['file_number'] + ".jpg") for _, row in self.annotations.iterrows()]
+        # Parse remaining columns.
+        self.emotion = self.annotations['exp'].tolist()
+        self.arousal = self.annotations['aro'].tolist()
+        self.valence = self.annotations['val'].tolist()
+        self.landmarks = [np.array(eval(row['lnd']), dtype=np.float32) for _, row in self.annotations.iterrows()]
+
+    def __getitem__(self, index):
+        img = Image.open(self.data[index]).convert('RGB')
+        if self.transform:
+            img = self.transform(img)
+        # Get primary label and auxiliary targets.
+        emotion_label = int(self.emotion[index])
+        aro = torch.tensor(self.arousal[index], dtype=torch.float32)
+        val = torch.tensor(self.valence[index], dtype=torch.float32)
+        landmarks = torch.tensor(self.landmarks[index], dtype=torch.float32)  # shape: [136]
+        return img, emotion_label, aro, val, landmarks
+
+    def __len__(self):
+        return len(self.data)
 
 class WBirdsDataset(PyTorchDataset):
     def __init__(

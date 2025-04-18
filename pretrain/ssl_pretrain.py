@@ -46,7 +46,7 @@ class TrainingParameters:
     threshold_note: int = 1
     """Skip threshold to discard adjustment in note."""
     batch_size: int = 32
-    lr: float = 0.1
+    lr: float = 0.0001
     momentum: float = 0.9
     weight_decay: float = 5e-4
     smooth: float = 0.1
@@ -55,6 +55,7 @@ class TrainingParameters:
     milestones: list = field(default_factory=lambda: [75, 125])
     """The epochs to decay the learning rate used in lr scheduler."""
     save_epoch: int = 10
+    num_workers: int = 32
 
     @property
     def base_data_name(self):
@@ -66,7 +67,6 @@ TIME_NOW = datetime.now().strftime(DATE_FORMAT)
 
 
 def train(config: TrainingParameters) -> None:
-
     start = time.time()
     model.main_model.train()
     model.ssh.train()
@@ -75,7 +75,7 @@ def train(config: TrainingParameters) -> None:
         shuffle=True,
         repeat=False,
         ref_num_data=None,
-        num_workers=config.num_workers if hasattr(config, "num_workers") else 26,
+        num_workers=config.num_workers if hasattr(config, "num_workers") else 32,
         pin_memory=True,
         drop_last=False,
     ):
@@ -115,7 +115,7 @@ def eval_training(config: TrainingParameters, epoch: int) -> float:
         shuffle=True,
         repeat=False,
         ref_num_data=None,
-        num_workers=config.num_workers if hasattr(config, "num_workers") else 26,
+        num_workers=config.num_workers if hasattr(config, "num_workers") else 32,
         pin_memory=True,
         drop_last=False,
     ):
@@ -178,18 +178,13 @@ if __name__ == "__main__":
         )
     else:
         loss_function = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(
+
+    optimizer = optim.AdamW(
         params,
         lr=config.lr,
-        momentum=config.momentum,
         weight_decay=config.weight_decay,
     )
-    train_scheduler = optim.lr_scheduler.MultiStepLR(
-        optimizer,
-        milestones=[config.milestones[0], config.milestones[1]],
-        gamma=0.1,
-        last_epoch=-1,
-    )
+    train_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.maxEpochs)
 
     model.main_model.requires_grad_(True)
     model.ssh.requires_grad_(True)
