@@ -19,10 +19,10 @@ def get_args():
     
     # define test evaluation info.
     parser.add_argument("--root_path", default="./logs", type=str)
-    parser.add_argument("--data_path", default="./datasets", type=str)
+    parser.add_argument("--data_path", default="/home/johnt/scratch/AffectNet7_37k_balanced/val", type=str)
     parser.add_argument(
         "--ckpt_path",
-        default="/home/johnt/projects/rrg-amiilab/johnt/fmae-iat/exp_AffectNet8_finetune_vit_L/checkpoint-28.pth",
+        default="/home/johnt/projects/rrg-amiilab/johnt/ttab-main/AffectNet7-66_14.pth",
         type=str,
     )
     parser.add_argument("--seed", default=2022, type=int)

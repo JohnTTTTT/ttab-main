@@ -23,10 +23,11 @@ faulthandler.enable()
 class TrainingParameters:
     data_name: str
     model_name: str
-    data_path: str = "./home/johnt/scratch/AffectNet/extracted_files/train_set/separated_images"
+    data_path: str = "./home/johnt/scratch/AffectNet7_37k_balanced/train"
     """Parent folder of the target dataset."""
     ckpt_path: str = "./pretrain/checkpoint"
     """Path to save the checkpoint."""
+    pretrained_ckpt: str = "/home/johnt/scratch/AffectNet/FMAE_ViT_large.pth"
     seed: int = 2022
     device: str = "cuda"
     entry_of_shared_layers: str = "layer4"

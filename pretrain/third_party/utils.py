@@ -3,7 +3,8 @@ import copy
 import numpy as np
 import sys
 sys.path.append("..")
-
+import os
+import timm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -106,12 +107,50 @@ def build_model(config) -> nn.Module:
                 assert config.group_norm is None, "IABN cannot be used with group norm."
                 model = convert_iabn(model, config)
         elif "vit" in config.model_name.lower():
-            import timm
-            full_model_name = "vit_base_patch16_224" if config.model_name.lower() == "vit" else config.model_name
-            model = timm.create_model(full_model_name, pretrained=False)
-            state_dict = torch.load('/home/johnt/projects/rrg-amiilab/johnt/ttab-main/vit_base_patch16_224_state_dict.pth', map_location=config.device)
-            model.load_state_dict(state_dict)
-            model.head = nn.Linear(model.head.in_features, num_classes)
+            # choose the large variant if user gave “vit”
+            full_model_name = (
+                "vit_large_patch16_224"
+                if config.model_name.lower() == "vit"
+                else config.model_name
+            )
+
+            # 1) load your finetuned ViT bundle from config.ckpt_path
+            ckpt = torch.load(config.ckpt_path, map_location=config.device)
+            state_dict = ckpt.get("model", ckpt.get("state_dict", ckpt))
+
+            # 2) try to find the head.weight entry
+            head_keys = [k for k in state_dict if k.endswith("head.weight")]
+            if head_keys:
+                head_w = state_dict[head_keys[0]]
+                num_classes_ckpt = head_w.shape[0]
+            else:
+                # fallback: look up AffectNet’s class count
+                num_classes_ckpt = dataset_defaults["affectnet"]["statistics"]["n_classes"]
+                print(
+                    f"⚠️ head.weight not found in checkpoint; "
+                    f"defaulting to {num_classes_ckpt} classes"
+                )
+
+            # 3) instantiate a ViT whose head matches that size
+            model = timm.create_model(
+                full_model_name,
+                pretrained=False,
+                num_classes=num_classes_ckpt,
+            )
+
+            # 4) remap any fc_norm.* → norm.* keys
+            new_state = {}
+            for k, v in state_dict.items():
+                key = k[len("model."):] if k.startswith("model.") else k
+                if key.startswith("fc_norm."):
+                    key = "norm." + key.split(".", 1)[1]
+                new_state[key] = v
+
+            # 5) load weights (strict=False lets you get a fresh head if none existed)
+            missing, unexpected = model.load_state_dict(new_state, strict=False)
+            print("Missing keys:", missing)
+            print("Unexpected keys:", unexpected)
+
         else:
             raise ValueError(f"Unsupported model name: {config.model_name}")
     return model

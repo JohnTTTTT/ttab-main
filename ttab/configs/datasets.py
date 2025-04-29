@@ -72,7 +72,7 @@ dataset_defaults = {
         "statistics": {
             "mean": (0.485, 0.456, 0.406),
             "std": (0.229, 0.224, 0.22),
-            "n_classes": 8,
+            "n_classes": 7,
         },  
         "img_shape": (224, 224, 3),
     }

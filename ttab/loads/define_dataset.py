@@ -7,9 +7,9 @@ from typing import Callable, List, Tuple
 
 import numpy as np
 import torch
-
+from ttab.loads.datasets.utils.preprocess_toolkit import get_transform
 import ttab.loads.datasets.loaders as loaders
-from ttab.api import PyTorchDataset
+from ttab.api import PyTorchDataset, Batch
 from ttab.loads.datasets.cifar import CIFAR10_1, CIFARSyntheticShift, LabelShiftedCIFAR
 from ttab.loads.datasets.dataset_sampling import DatasetSampling
 from ttab.loads.datasets.dataset_shifts import (
@@ -556,56 +556,36 @@ class ConstructTestDataset(object):
         return dataset
 
     def _get_affectnet_test_domain_datasets_helper(
-        self, test_domain: TestDomain, data_augment: bool = False, split: str = "test"
+        self,
+        test_domain: TestDomain,
+        data_augment: bool = False,
+        split: str = "test"
     ) -> PyTorchDataset:
-        if test_domain.shift_type not in ["natural", "no_shift"]:
-            raise NotImplementedError(
-                f"invalid shift type={test_domain.shift_type} for affectnet dataset. Only 'natural' and 'no_shift' are supported."
-            )
-        
-        # For no_shift, we disable data augmentation.
-        if test_domain.shift_type == "no_shift":
-            data_augment = False
+        """
+        Instantiate the new AffectNetDataset for evaluation.
 
-        import os
-        from ttab.api import PyTorchDataset, Batch
-        from ttab.loads.datasets.utils.preprocess_toolkit import get_transform
-        from ttab.loads.datasets.datasets import ImageFolderDataset
+        Expects your local directory structure:
+            /home/johnt/scratch/AffectNet7_37k_balanced/
+                val/<class_label>/*.jpg
+        """
+        # Use the absolute path to your balanced AffectNet val folder
+        root = "/home/johnt/scratch/AffectNet7_37k_balanced"
 
-        # Define normalization and transform for AffectNet.
-        # Using ImageNet statistics as a starting point.
-        normalize = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
-        input_size = 224
-        # Use a transform tailored for AffectNet (you might need to implement or adjust this)
-        transform = get_transform("affectnet", input_size=input_size, normalize=normalize, augment=data_augment)
-        
-        # Assume your test data is organized as:
-        #   <data_path>/affectnet/organized_images/test/<class_name>/image.jpg
-        test_root = os.path.join(self.data_path, "/home/johnt/scratch/AffectNet/dataset", "val")
-        
-        # Create the raw dataset.
-        raw_dataset = ImageFolderDataset(root=test_root, transform=transform)
-        
-        # Wrap it in a PyTorchDataset.
-        # Change the number of classes to match AffectNet (e.g., 8 for the eight emotion categories)
-        test_dataset = PyTorchDataset(
-            dataset=raw_dataset,
+        # Use the TestDomain data_name (usually "affectnet") for wrapping
+        data_name = test_domain.data_name
+        shift_cls = functools.partial(NoShiftedData, data_name=data_name)
+
+        # Instantiate and return the custom dataset
+        return AffectNetDataset(
+            root=root,
+            data_name=data_name,
+            split=split,
             device=self.device,
-            prepare_batch=lambda batch, device: Batch(*batch).to(device),
-            num_classes=8,
+            data_augment=data_augment,
+            data_shift_class=shift_cls,
         )
-        # Manually copy the transform attributes.
-        test_dataset.transform = raw_dataset.transform
-        test_dataset.target_transform = getattr(raw_dataset, "target_transform", None)
-        
-        # Expose the prepare_batch function as a public attribute.
-        test_dataset.prepare_batch = test_dataset._prepare_batch
-
-        return test_dataset
 
 
-
-    
 
     def construct_test_dataset(
         self, scenario: Scenario, data_augment: bool = False

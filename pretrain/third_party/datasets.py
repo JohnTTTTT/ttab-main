@@ -102,11 +102,11 @@ def get_train_dataset(config) -> BaseLoader:
         # Set the root paths (update if necessary).
         train_root = os.path.join(
             config.data_path,
-            "/home/johnt/scratch/AffectNet/dataset/train",
+            "/home/johnt/scratch/AffectNet7_37k_balanced/train",
         )
         val_root = os.path.join(
             config.data_path,
-            "/home/johnt/scratch/AffectNet/dataset/val",
+            "/home/johnt/scratch/AffectNet7_37k_balanced/val",
         )
 
         # Create the underlying datasets.

@@ -217,72 +217,49 @@ class CIFARDataset(PyTorchDataset):
 class AffectNetDataset(PyTorchDataset):
     def __init__(
         self,
-        root,
+        root: str,
         data_name: str,
         split: str = "test",
         device: str = "cuda",
         data_augment: bool = False,
         data_shift_class: Optional[Callable] = None,
     ):
-        # Determine training mode based on the split.
-        is_train = True if split == "train" else False
-        
-        # Get the AffectNet transform.
+        # Determine mode and build transform
+        is_train = split == "train"
         self.transform = get_transform(
-            "affectnet", augment=any([is_train, data_augment]), color_process=False
+            "affectnet", augment=(is_train or data_augment), color_process=False
         )
         self.target_transform = None
-        
-        # Set number of classes based on AffectNet statistics.
+
+        # Number of classes in AffectNet
         num_classes = dataset_defaults["affectnet"]["statistics"]["n_classes"]
-        
-        # For deterministic shifted data, set up a partial function.
-        if "deterministic" in data_name:
-            data_shift_class = functools.partial(NoShiftedData, data_name=data_name)
-        
-        # Ensure a data_shift_class is provided.
         assert data_shift_class is not None, "data_shift_class is required."
-        
-        # Configure the dataset based on the type of shift.
+
+        # Map 'test' to 'val' folder
+        folder = "val" if split == "test" else split
+        validdir = os.path.join(root, folder)
+
+        # Load images from folder
+        raw = ImageFolderDataset(
+            root=validdir,
+            transform=self.transform,
+            target_transform=self.target_transform,
+        )
+
+        # Apply shift wrapper
         if issubclass(data_shift_class.func, NoShiftedData):
-            if "deterministic" in data_name:
-                # Support for strings like "affectnet_c_deterministic-gaussian_noise-5"
-                _new_data_names = data_name.split("_", 2)
-                _shift_name = _new_data_names[-1].split("-")[1]
-                _shift_degree = _new_data_names[-1].split("-")[-1]
-                
-                # For deterministic shifts, assume a structure like:
-                #   <root>/affectnet-c/<shift_name>/<shift_degree>
-                validdir = os.path.join(root, "affectnet-c", _shift_name, _shift_degree)
-                dataset = ImageFolderDataset(
-                    root=validdir,
-                    transform=self.transform,
-                    target_transform=self.target_transform,
-                )
-            else:
-                # For in-distribution AffectNet test data,
-                # assume the structure:
-                #   <root>/affectnet/organized_images/<split>/<class_name>/image.jpg
-                validdir = os.path.join(root, "affectnet", "organized_images", split)
-                dataset = ImageFolderDataset(
-                    root=validdir,
-                    transform=self.transform,
-                    target_transform=self.target_transform,
-                )
-            dataset = data_shift_class(dataset=dataset)
+            dataset = data_shift_class(dataset=raw)
         elif issubclass(data_shift_class.func, SyntheticShiftedData):
-            # For synthetic shifts, load the base in-distribution data.
-            validdir = os.path.join(root, "affectnet", "organized_images", split)
-            dataset = ImageFolderDataset(
-                root=validdir,
-                transform=self.transform,
-                target_transform=self.target_transform,
-            )
-            dataset = data_shift_class(dataset=dataset)
+            dataset = data_shift_class(dataset=raw)
             dataset.apply_corruption()
         else:
             raise ValueError(f"Unsupported data_shift_class: {data_shift_class}")
 
+        # Ensure wrapper exposes transform attrs for downstream merge
+        setattr(dataset, "transform", self.transform)
+        setattr(dataset, "target_transform", self.target_transform)
+
+        # Initialize PyTorchDataset with wrapped data
         super().__init__(
             dataset,
             device=device,
@@ -924,8 +901,8 @@ class MergeMultiDataset(PyTorchDataset):
         self.device = datasets[0]._device
 
         # some basic dataset configuration TODO: add a warning to the log
-        self.transform = datasets[0].transform
-        self.target_transform = datasets[0].target_transform
+        self.transform = datasets[0].dataset.transform
+        self.target_transform = datasets[0].dataset.target_transform
         num_classes = datasets[0].num_classes
         classes = datasets[0].query_dataset_attr("classes")
         class_to_index = datasets[0].query_dataset_attr("class_to_index")
@@ -961,10 +938,11 @@ class MergeMultiDataset(PyTorchDataset):
         dataset = data_shift_class(dataset=dataset)
         dataset.update_indices(merged_indices)
 
+        prepare_fn = self.datasets[0]._prepare_batch
         super().__init__(
             dataset=dataset,
             device=self.device,
-            prepare_batch=self.datasets[0].prepare_batch,
+            prepare_batch=prepare_fn,
             num_classes=num_classes,
         )
 

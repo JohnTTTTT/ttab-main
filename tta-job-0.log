@@ -1,80 +1,162 @@
-OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python run_exp.py --job_name tta  --job_id /tmp/jobrun_logs_1745017118  --timestamp 1745018051  --python_path python  --main_file run_exp.py  --num_jobs_per_node 1  --num_jobs_per_script 1  --wait_in_seconds_per_job 15  --root_path ./logs  --data_path ./datasets  --ckpt_path /home/johnt/projects/rrg-amiilab/johnt/fmae-iat/exp_AffectNet8_finetune_vit_L/checkpoint-28.pth  --seed 2022  --device cuda:0  --num_cpus 1  --model_name vit_large_patch16_224  --model_adaptation_method no_adaptation  --model_selection_method last_iterate  --task classification  --base_data_name affectnet  --src_data_name affectnet  --data_names affectnet  --data_wise batch_wise  --batch_size 32  --lr 0.01  --n_train_steps 1  --offline_pre_adapt False  --episodic False  --intra_domain_shuffle True  --inter_domain HomogeneousNoMixture  --domain_sampling_name uniform  --domain_sampling_ratio 1.0  --non_iid_pattern class_wise_over_domain  --non_iid_ness 0.1  --step_ratios 0.1 0.3 0.5 0.75  --stochastic_restore_model False  --restore_prob 0.01  --fishers False  --fisher_size 5000  --fisher_alpha 1.5  --aug_size 32  --record_preadapted_perf False  --grad_checkpoint True  --debug False  --device cuda:0   
-[johnt@ng31301 ttab-main]$ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python run_exp.py --job_name tta  --job_id /tmp/jobrun_logs_1745017118  --timestamp 1745018051  --python_path python  --main_file run_exp.py  --num_jobs_per_node 1  --num_jobs_per_script 1  --wait_in_seconds_per_job 15  --root_path ./logs  --data_path ./datasets  --ckpt_path /home/johnt/projects/rrg-amiilab/johnt/fmae-iat/exp_AffectNet8_finetune_vit_L/checkpoint-28.pth  --seed 2022  --device cuda:0  --num_cpus 1  --model_name vit_large_patch16_224  --model_adaptation_method no_adaptation  --model_selection_method last_iterate  --task classification  --base_data_name affectnet  --src_data_name affectnet  --data_names affectnet  --data_wise batch_wise  --batch_size 32  --lr 0.01  --n_train_steps 1  --offline_pre_adapt False  --episodic False  --intra_domain_shuffle True  --inter_domain HomogeneousNoMixture  --domain_sampling_name uniform  --domain_sampling_ratio 1.0  --non_iid_pattern class_wise_over_domain  --non_iid_ness 0.1  --step_ratios 0.1 0.3 0.5 0.75  --stochastic_restore_model False  --restore_prob 0.01  --fishers False  --fisher_size 5000  --fisher_alpha 1.5  --aug_size 32  --record_preadapted_perf False  --grad_checkpoint True  --debug False  --device cuda:0
-/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models     
-  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)                               
-Missing keys: []                  
-Unexpected keys: []               
-Scenario(                         
-  task='classification',          
-  model_name='vit_large_patch16_224',                               
-  model_adaptation_method='no_adaptation',                          
-  model_selection_method='last_iterate',                            
-  base_data_name='affectnet',     
-  src_data_name='affectnet',      
-  test_domains=[ TestDomain(      
-                    base_data_name='affectnet',                     
-                    data_name='affectnet',                          
-                    shift_type='no_shift',                          
-                    shift_property=NoShiftProperty(has_shift=False),                                                                    
-                    domain_sampling_name='uniform',                 
-                    domain_sampling_value=None,                     
-                    domain_sampling_ratio=1.0)],                    
-  test_case=TestCase(             
-               inter_domain=HomogeneousNoMixture(has_mixture=False),                                                                    
-               batch_size=32,     
-               data_wise='batch_wise',                              
-               offline_pre_adapt=False,                             
-               episodic=False,    
-               intra_domain_shuffle=True))                          
-Loaded batch 0                    
-runtime: {'time': '2025-04-18 19:05:02', 'step': 1, 'epoch': 0.008, 'cross_entropy': 2.9655275344848633, 'accuracy_top1': 0.0} ({'split': 'test', 'type': 'step'})        
-Loaded batch 1                    
-runtime: {'time': '2025-04-18 19:05:13', 'step': 2, 'epoch': 0.016, 'cross_entropy': 2.753361940383911, 'accuracy_top1': 0.0} ({'split': 'test', 'type': 'step'})         
-Loaded batch 2                    
-^CTraceback (most recent call last):                                
-  File "/lustre06/project/6090504/johnt/ttab-main/run_exp.py", line 48, in <module>                                                     
-    main(init_config=conf)        
-  File "/lustre06/project/6090504/johnt/ttab-main/run_exp.py", line 43, in main                                                         
-    benchmark.eval()              
-  File "/lustre06/project/6090504/johnt/ttab-main/ttab/benchmark.py", line 202, in eval                                                 
-    previous_batches = self._online_adapt_step(                     
-  File "/lustre06/project/6090504/johnt/ttab-main/ttab/benchmark.py", line 132, in _online_adapt_step                                   
-    self._model_adaptation_cls.adapt_and_eval(                      
-  File "/lustre06/project/6090504/johnt/ttab-main/ttab/model_adaptation/no_adaptation.py", line 89, in adapt_and_eval                   
-    y_hat = self._model(current_batch._x)                           
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl                                
-    return forward_call(*args, **kwargs)                            
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 853, in forward                             
-    x = self.forward_features(x)  
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 832, in forward_features                    
-    x = checkpoint_seq(self.blocks, x)                              
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_manipulate.py", line 278, in checkpoint_seq                             
-    x = torch.utils.checkpoint.checkpoint(                          
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 251, in checkpoint
-    return _checkpoint_without_reentrant(                           
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 432, in _checkpoint_without_reentrant               
-    output = function(*args, **kwargs)                              
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/_manipulate.py", line 261, in forward  
-    _x = functions[j](_x)         
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl                                
-    return forward_call(*args, **kwargs)                            
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 170, in forward                             
-    x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))      
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl                                
-    return forward_call(*args, **kwargs)                            
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/modules/normalization.py", line 190, in forward                             
-    return F.layer_norm(          
-  File "/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/torch/nn/functional.py", line 2515, in layer_norm  
-    return torch.layer_norm(input, normalized_shape, weight, bias, eps, torch.backends.cudnn.enabled)                                   
-KeyboardInterrupt                 
-
-[johnt@ng31301 ttab-main]$ tmux capture-pane -p -J -S - -t tta-job-0 > tta-job-0.log                                                    
-
-
-
-
-
-
-
-
+OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python run_exp.py --job_name tta  --job_id /tmp/jobrun_logs_1745781139  --timestamp 1745781559  --python_path python  --main_file run_exp.py  --num_jobs_per_node 1  --num_jobs_per_script 1  --wait_in_seconds_per_job 15  --root_path ./logs  --data_path ./datasets  --ckpt_path /home/johnt/projects/rrg-amiilab/johnt/ttab-main/AffectNet7-66_14.pth  --seed 2022  --device cuda:0  --num_cpus 1  --model_name vit_large_patch16_224  --model_adaptation_method no_adaptation  --model_selection_method last_iterate  --task classification  --base_data_name affectnet  --src_data_name affectnet  --data_names affectnet  --data_wise batch_wise  --batch_size 32  --lr 0.01  --n_train_steps 1  --offline_pre_adapt False  --episodic False  --intra_domain_shuffle True  --inter_domain HomogeneousNoMixture  --domain_sampling_name uniform  --domain_sampling_ratio 1.0  --non_iid_pattern class_wise_over_domain  --non_iid_ness 0.1  --step_ratios 0.1 0.3 0.5 0.75  --stochastic_restore_model False  --restore_prob 0.01  --fishers False  --fisher_size 5000  --fisher_alpha 1.5  --aug_size 32  --record_preadapted_perf False  --grad_checkpoint True  --debug False  --device cuda:0     
+[johnt@ng30711 ttab-main]$ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python run_exp.py --job_name tta  --job_id /tmp/jobrun_logs_1745781139  --timestamp 1745781559  --python_path python  --main_file run_exp.py  --num_jobs_per_node 1  --num_jobs_per_script 1  --wait_in_seconds_per_job 15  --root_path ./logs  --data_path ./datasets  --ckpt_path /home/johnt/projects/rrg-amiilab/johnt/ttab-main/AffectNet7-66_14.pth  --seed 2022  --device cuda:0  --num_cpus 1  --model_name vit_large_patch16_224  --model_adaptation_method no_adaptation  --model_selection_method last_iterate  --task classification  --base_data_name affectnet  --src_data_name affectnet  --data_names affectnet  --data_wise batch_wise  --batch_size 32  --lr 0.01  --n_train_steps 1  --offline_pre_adapt False  --episodic False  --intra_domain_shuffle True  --inter_domain HomogeneousNoMixture  --domain_sampling_name uniform  --domain_sampling_ratio 1.0  --non_iid_pattern class_wise_over_domain  --non_iid_ness 0.1  --step_ratios 0.1 0.3 0.5 0.75  --stochastic_restore_model False  --restore_prob 0.01  --fishers False  --fisher_size 5000  --fisher_alpha 1.5  --aug_size 32  --record_preadapted_perf False  --grad_checkpoint True  --debug False  --device cuda:0                  
+/lustre06/project/6090504/johnt/ttab-main/myenv/lib/python3.10/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models 
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)               
+Missing keys: []    
+Unexpected keys: [] 
+Total abs diff between model & ckpt tensors: 0.000000                           
+Scenario(           
+  task='classification',                
+  model_name='vit_large_patch16_224',   
+  model_adaptation_method='no_adaptation',                                      
+  model_selection_method='last_iterate',                                        
+  base_data_name='affectnet',           
+  src_data_name='affectnet',            
+  test_domains=[ TestDomain(            
+                    base_data_name='affectnet',                                 
+                    data_name='affectnet',                                      
+                    shift_type='no_shift',                                      
+                    shift_property=NoShiftProperty(has_shift=False),            
+                    domain_sampling_name='uniform',                             
+                    domain_sampling_value=None,                                 
+                    domain_sampling_ratio=1.0)],                                
+  test_case=TestCase(                   
+               inter_domain=HomogeneousNoMixture(has_mixture=False),            
+               batch_size=32,           
+               data_wise='batch_wise',  
+               offline_pre_adapt=False, 
+               episodic=False,          
+               intra_domain_shuffle=True))                                      
+Loaded batch 0      
+runtime: {'time': '2025-04-27 15:12:45', 'step': 1, 'epoch': 0.00909090909090909, 'cross_entropy': 2.0648610591888428, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})   
+Loaded batch 1      
+runtime: {'time': '2025-04-27 15:12:45', 'step': 2, 'epoch': 0.01818181818181818, 'cross_entropy': 2.0088446140289307, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 2      
+runtime: {'time': '2025-04-27 15:12:45', 'step': 3, 'epoch': 0.02727272727272727, 'cross_entropy': 1.8963772058486938, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 3      
+runtime: {'time': '2025-04-27 15:12:45', 'step': 4, 'epoch': 0.03636363636363636, 'cross_entropy': 1.9852964878082275, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})   
+Loaded batch 4      
+runtime: {'time': '2025-04-27 15:12:46', 'step': 5, 'epoch': 0.045454545454545456, 'cross_entropy': 1.9275665283203125, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 5      
+runtime: {'time': '2025-04-27 15:12:46', 'step': 6, 'epoch': 0.05454545454545454, 'cross_entropy': 2.0343167781829834, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'})  
+Loaded batch 6      
+runtime: {'time': '2025-04-27 15:12:46', 'step': 7, 'epoch': 0.06363636363636363, 'cross_entropy': 1.9572017192840576, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'})  
+Loaded batch 7      
+runtime: {'time': '2025-04-27 15:12:46', 'step': 8, 'epoch': 0.07272727272727272, 'cross_entropy': 2.028477430343628, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})    
+Loaded batch 8      
+runtime: {'time': '2025-04-27 15:12:47', 'step': 9, 'epoch': 0.08181818181818182, 'cross_entropy': 1.9407411813735962, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 9      
+runtime: {'time': '2025-04-27 15:12:47', 'step': 10, 'epoch': 0.09090909090909091, 'cross_entropy': 1.829276442527771, 'accuracy_top1': 28.125} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 10     
+runtime: {'time': '2025-04-27 15:12:47', 'step': 11, 'epoch': 0.1, 'cross_entropy': 2.0027105808258057, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'})                 
+Loaded batch 11     
+runtime: {'time': '2025-04-27 15:12:47', 'step': 12, 'epoch': 0.10909090909090909, 'cross_entropy': 1.9319467544555664, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'})                    
+Loaded batch 12     
+runtime: {'time': '2025-04-27 15:12:47', 'step': 13, 'epoch': 0.11818181818181818, 'cross_entropy': 1.9403760433197021, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 13     
+runtime: {'time': '2025-04-27 15:12:48', 'step': 14, 'epoch': 0.12727272727272726, 'cross_entropy': 1.87114679813385, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'})  
+Loaded batch 14     
+runtime: {'time': '2025-04-27 15:12:48', 'step': 15, 'epoch': 0.13636363636363635, 'cross_entropy': 1.9873852729797363, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'})                    
+Loaded batch 15     
+runtime: {'time': '2025-04-27 15:12:48', 'step': 16, 'epoch': 0.14545454545454545, 'cross_entropy': 1.9626694917678833, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})  
+Loaded batch 16     
+runtime: {'time': '2025-04-27 15:12:48', 'step': 17, 'epoch': 0.15454545454545454, 'cross_entropy': 2.0309488773345947, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})  
+Loaded batch 17     
+runtime: {'time': '2025-04-27 15:12:49', 'step': 18, 'epoch': 0.16363636363636364, 'cross_entropy': 2.0129637718200684, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})  
+Loaded batch 18     
+runtime: {'time': '2025-04-27 15:12:49', 'step': 19, 'epoch': 0.17272727272727273, 'cross_entropy': 1.9819337129592896, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'})                    
+Loaded batch 19     
+runtime: {'time': '2025-04-27 15:12:49', 'step': 20, 'epoch': 0.18181818181818182, 'cross_entropy': 1.8666070699691772, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'})                    
+Loaded batch 20     
+runtime: {'time': '2025-04-27 15:12:49', 'step': 21, 'epoch': 0.19090909090909092, 'cross_entropy': 1.9932811260223389, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})  
+Loaded batch 21     
+runtime: {'time': '2025-04-27 15:12:50', 'step': 22, 'epoch': 0.2, 'cross_entropy': 2.0594358444213867, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})                  
+Loaded batch 22     
+runtime: {'time': '2025-04-27 15:12:50', 'step': 23, 'epoch': 0.20909090909090908, 'cross_entropy': 1.8870354890823364, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'})                    
+Loaded batch 23     
+runtime: {'time': '2025-04-27 15:12:50', 'step': 24, 'epoch': 0.21818181818181817, 'cross_entropy': 1.9836376905441284, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})  
+Loaded batch 24     
+runtime: {'time': '2025-04-27 15:12:50', 'step': 25, 'epoch': 0.22727272727272727, 'cross_entropy': 2.0134425163269043, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})  
+Loaded batch 25     
+runtime: {'time': '2025-04-27 15:12:51', 'step': 26, 'epoch': 0.23636363636363636, 'cross_entropy': 1.916925072669983, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 26     
+runtime: {'time': '2025-04-27 15:12:51', 'step': 27, 'epoch': 0.24545454545454545, 'cross_entropy': 1.9891037940979004, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})  
+Loaded batch 27     
+runtime: {'time': '2025-04-27 15:12:51', 'step': 28, 'epoch': 0.2545454545454545, 'cross_entropy': 1.875579833984375, 'accuracy_top1': 28.125} ({'split': 'test', 'type': 'step'})  
+Loaded batch 28     
+runtime: {'time': '2025-04-27 15:12:51', 'step': 29, 'epoch': 0.2636363636363636, 'cross_entropy': 1.9922020435333252, 'accuracy_top1': 3.125} ({'split': 'test', 'type': 'step'})  
+Loaded batch 29     
+runtime: {'time': '2025-04-27 15:12:51', 'step': 30, 'epoch': 0.2727272727272727, 'cross_entropy': 1.9151537418365479, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 30     
+runtime: {'time': '2025-04-27 15:12:52', 'step': 31, 'epoch': 0.2818181818181818, 'cross_entropy': 2.023043155670166, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'})   
+Loaded batch 31     
+runtime: {'time': '2025-04-27 15:12:52', 'step': 32, 'epoch': 0.2909090909090909, 'cross_entropy': 1.9563263654708862, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'})  
+Loaded batch 32     
+runtime: {'time': '2025-04-27 15:12:52', 'step': 33, 'epoch': 0.3, 'cross_entropy': 1.7981113195419312, 'accuracy_top1': 34.375} ({'split': 'test', 'type': 'step'})                
+Loaded batch 33     
+runtime: {'time': '2025-04-27 15:12:52', 'step': 34, 'epoch': 0.3090909090909091, 'cross_entropy': 2.0125696659088135, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'})  
+Loaded batch 34     
+runtime: {'time': '2025-04-27 15:12:53', 'step': 35, 'epoch': 0.3181818181818182, 'cross_entropy': 1.955618143081665, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'})  
+Loaded batch 35     
+runtime: {'time': '2025-04-27 15:12:53', 'step': 36, 'epoch': 0.32727272727272727, 'cross_entropy': 1.9022425413131714, 'accuracy_top1': 25.0} ({'split': 'test', 'type': 'step'})  
+Loaded batch 36     
+runtime: {'time': '2025-04-27 15:12:53', 'step': 37, 'epoch': 0.33636363636363636, 'cross_entropy': 2.029517889022827, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})   
+Loaded batch 37     
+runtime: {'time': '2025-04-27 15:12:54', 'step': 38, 'epoch': 0.34545454545454546, 'cross_entropy': 1.952297329902649, 'accuracy_top1': 25.0} ({'split': 'test', 'type': 'step'})   
+Loaded batch 38     
+runtime: {'time': '2025-04-27 15:12:54', 'step': 39, 'epoch': 0.35454545454545455, 'cross_entropy': 2.020540475845337, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})   
+Loaded batch 39     
+runtime: {'time': '2025-04-27 15:12:54', 'step': 40, 'epoch': 0.36363636363636365, 'cross_entropy': 2.03668475151062, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})    
+Loaded batch 40     
+runtime: {'time': '2025-04-27 15:12:54', 'step': 41, 'epoch': 0.37272727272727274, 'cross_entropy': 1.9986931085586548, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 41     
+runtime: {'time': '2025-04-27 15:12:54', 'step': 42, 'epoch': 0.38181818181818183, 'cross_entropy': 2.0555920600891113, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 42     
+runtime: {'time': '2025-04-27 15:12:55', 'step': 43, 'epoch': 0.39090909090909093, 'cross_entropy': 1.941956877708435, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 43     
+runtime: {'time': '2025-04-27 15:12:55', 'step': 44, 'epoch': 0.4, 'cross_entropy': 2.018548011779785, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})                   
+Loaded batch 44     
+runtime: {'time': '2025-04-27 15:12:55', 'step': 45, 'epoch': 0.4090909090909091, 'cross_entropy': 1.9798929691314697, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'})  
+Loaded batch 45     
+runtime: {'time': '2025-04-27 15:12:55', 'step': 46, 'epoch': 0.41818181818181815, 'cross_entropy': 1.9862778186798096, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 46     
+runtime: {'time': '2025-04-27 15:12:56', 'step': 47, 'epoch': 0.42727272727272725, 'cross_entropy': 2.006870746612549, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 47     
+runtime: {'time': '2025-04-27 15:12:56', 'step': 48, 'epoch': 0.43636363636363634, 'cross_entropy': 2.0816328525543213, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 48     
+runtime: {'time': '2025-04-27 15:12:56', 'step': 49, 'epoch': 0.44545454545454544, 'cross_entropy': 2.0166194438934326, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})  
+Loaded batch 49     
+runtime: {'time': '2025-04-27 15:12:56', 'step': 50, 'epoch': 0.45454545454545453, 'cross_entropy': 2.0719878673553467, 'accuracy_top1': 9.375} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 50     
+runtime: {'time': '2025-04-27 15:12:57', 'step': 51, 'epoch': 0.4636363636363636, 'cross_entropy': 2.0565185546875, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})      
+Loaded batch 51     
+runtime: {'time': '2025-04-27 15:12:57', 'step': 52, 'epoch': 0.4727272727272727, 'cross_entropy': 2.028127431869507, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})    
+Loaded batch 52     
+runtime: {'time': '2025-04-27 15:12:57', 'step': 53, 'epoch': 0.4818181818181818, 'cross_entropy': 1.987762689590454, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'})  
+Loaded batch 53     
+runtime: {'time': '2025-04-27 15:12:57', 'step': 54, 'epoch': 0.4909090909090909, 'cross_entropy': 1.9664874076843262, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'})  
+Loaded batch 54     
+runtime: {'time': '2025-04-27 15:12:58', 'step': 55, 'epoch': 0.5, 'cross_entropy': 2.0203447341918945, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})                  
+Loaded batch 55     
+runtime: {'time': '2025-04-27 15:12:58', 'step': 56, 'epoch': 0.509090909090909, 'cross_entropy': 2.048255205154419, 'accuracy_top1': 3.125} ({'split': 'test', 'type': 'step'})    
+Loaded batch 56     
+runtime: {'time': '2025-04-27 15:12:58', 'step': 57, 'epoch': 0.5181818181818182, 'cross_entropy': 2.0041849613189697, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})   
+Loaded batch 57     
+runtime: {'time': '2025-04-27 15:12:58', 'step': 58, 'epoch': 0.5272727272727272, 'cross_entropy': 1.8843976259231567, 'accuracy_top1': 21.875} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 58     
+runtime: {'time': '2025-04-27 15:12:59', 'step': 59, 'epoch': 0.5363636363636364, 'cross_entropy': 1.9369418621063232, 'accuracy_top1': 28.125} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 59     
+runtime: {'time': '2025-04-27 15:12:59', 'step': 60, 'epoch': 0.5454545454545454, 'cross_entropy': 2.0839407444000244, 'accuracy_top1': 12.5} ({'split': 'test', 'type': 'step'})   
+Loaded batch 60     
+runtime: {'time': '2025-04-27 15:12:59', 'step': 61, 'epoch': 0.5545454545454546, 'cross_entropy': 2.0300655364990234, 'accuracy_top1': 3.125} ({'split': 'test', 'type': 'step'})  
+Loaded batch 61     
+runtime: {'time': '2025-04-27 15:12:59', 'step': 62, 'epoch': 0.5636363636363636, 'cross_entropy': 1.9921143054962158, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})   
+Loaded batch 62     
+runtime: {'time': '2025-04-27 15:12:59', 'step': 63, 'epoch': 0.5727272727272728, 'cross_entropy': 1.9884464740753174, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'}) 
+Loaded batch 63     
+runtime: {'time': '2025-04-27 15:13:00', 'step': 64, 'epoch': 0.5818181818181818, 'cross_entropy': 1.9797228574752808, 'accuracy_top1': 18.75} ({'split': 'test', 'type': 'step'})  
+Loaded batch 64     
+runtime: {'time': '2025-04-27 15:13:00', 'step': 65, 'epoch': 0.5909090909090909, 'cross_entropy': 1.9631147384643555, 'accuracy_top1': 6.25} ({'split': 'test', 'type': 'step'})   
+Loaded batch 65     
+runtime: {'time': '2025-04-27 15:13:00', 'step': 66, 'epoch': 0.6, 'cross_entropy': 1.872509479522705, 'accuracy_top1': 15.625} ({'split': 'test', 'type': 'step'})                 
 

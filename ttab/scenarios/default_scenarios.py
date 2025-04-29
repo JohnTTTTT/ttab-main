@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ttab.loads.datasets.dataset_shifts import SyntheticShiftProperty
+from ttab.loads.datasets.dataset_shifts import NoShiftProperty
 from ttab.scenarios import HomogeneousNoMixture, Scenario, TestCase, TestDomain
 
 default_scenarios = {
@@ -14,14 +14,11 @@ default_scenarios = {
         test_domains=[
             TestDomain(
                 base_data_name="affectnet",
+                # data_name must exactly match what you trained on:
                 data_name="affectnet",
+                # load your in‐distribution (no shift) split
                 shift_type="no_shift",
-                shift_property=SyntheticShiftProperty(
-                    shift_degree=5,
-                    shift_name="gaussian_noise",
-                    version="deterministic",
-                    has_shift=True,
-                ),
+                shift_property=NoShiftProperty(has_shift=False),
                 domain_sampling_name="uniform",
                 domain_sampling_value=None,
                 domain_sampling_ratio=1.0,
@@ -33,7 +30,8 @@ default_scenarios = {
             data_wise="batch_wise",
             offline_pre_adapt=False,
             episodic=False,
-            intra_domain_shuffle=True,
+            # no shuffling or extra augment in‐domain
+            intra_domain_shuffle=False,
         ),
     ),
 }
